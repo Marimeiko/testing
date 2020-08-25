@@ -28,7 +28,7 @@ SCENARIO("Lane class constructor takes one string type argument", "[creating lan
 
             THEN("Value laneName_ is equal to filename without extension")
             {
-                REQUIRE(lane.getLaneName() == "lane");
+                REQUIRE(lane.getLaneName() == "");
                 REQUIRE(lane1.getLaneName() == "lane1");
                 REQUIRE(lane2.getLaneName() == "lane2");
                 REQUIRE(lane3.getLaneName() == "lane3");

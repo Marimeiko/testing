@@ -6,17 +6,11 @@
 
 void Lane::parseFile(std::string fileName)
 {
-    fileName = std::filesystem::path(fileName).stem();
+    std::string fileExtension = std::filesystem::path(fileName).extension();
+    std::size_t foundExtensionIndex = fileName.find(fileExtension);
 
-    if(fileName[0] == '.') {
-
-        std::string fileExtension = std::filesystem::path(fileName).extension();
-        std::size_t foundExtensionIndex = fileName.find(fileExtension);
-
-        if (foundExtensionIndex != std::string::npos) {
-            fileName.erase(foundExtensionIndex);
-        }
-
+    if (foundExtensionIndex != std::string::npos) {
+        fileName.erase(foundExtensionIndex);
     }
 
     this->laneName_ = fileName;
