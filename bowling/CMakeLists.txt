@@ -30,7 +30,7 @@ include_directories(inc)
 add_library(${PROJECT_NAME}-lib STATIC ${SOURCES})
 
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib stdc++fs)
 
 add_executable(${PROJECT_NAME}-ut tests/test_main.cpp ${TESTS})
 target_link_libraries(${PROJECT_NAME}-ut ${PROJECT_NAME}-lib)
