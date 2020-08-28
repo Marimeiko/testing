@@ -12,9 +12,10 @@ SingleGame::~SingleGame() {}
 
 void SingleGame::parseGameInput()
 {
-    this->readPlayerName();
-    this->putScoresToVector();
-    this->checkGameStatus();
+    readPlayerName();
+    putScoresToVector();
+    checkGameStatus();
+    countScore();
 }
 
 void SingleGame::readPlayerName()
@@ -33,7 +34,7 @@ void SingleGame::readPlayerName()
 
 void SingleGame::putScoresToVector()
 {
-    auto foundIndexAfterName = getGameInput().find(':');
+    auto foundIndexAfterName = getGameInput().find(":");
     if (foundIndexAfterName != std::string::npos) {
         setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
     }
@@ -89,7 +90,55 @@ void SingleGame::checkGameStatus()
     }
 }
 
-void SingleGame::countScore() {}
+bool SingleGame::isStrike(size_t firstInFrame)
+{
+    return (rolls_[firstInFrame] == 10);
+}
+
+bool SingleGame::isSpare(size_t firstInFrame)
+{
+    if ((firstInFrame < rolls_.size())) {
+        return ((rolls_[firstInFrame] + rolls_[firstInFrame + 1]) == 10);
+    }
+    else {
+        return false;
+    }
+}
+
+void SingleGame::countScore()
+{
+    size_t score{};
+    size_t firstInFrame{};
+    const auto numberOfRollsInGame = rolls_.size();
+
+    for (size_t i = 0; i < 10 && firstInFrame < numberOfRollsInGame; ++i) {
+        if (isStrike(firstInFrame)) {
+            score += 10;
+            if (rolls_[firstInFrame + 1] < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 1];
+            }
+            if (rolls_[firstInFrame + 2] < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 2];
+            }
+            firstInFrame++;
+        }
+        else if (isSpare(firstInFrame)) {
+            score += 10;
+            if (rolls_[firstInFrame + 2] < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 2];
+            }
+            firstInFrame += 2;
+        }
+        else {
+            score += rolls_[firstInFrame];
+            if (rolls_[firstInFrame + 1] < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 1];
+            }
+            firstInFrame += 2;
+        }
+    }
+    score_ = score;
+}
 
 void SingleGame::setRolls(std::size_t point)
 {
@@ -143,11 +192,6 @@ std::string SingleGame::getBowlingSings() const
 std::vector<std::size_t> SingleGame::getRolls() const
 {
     return this->rolls_;
-}
-
-std::size_t SingleGame::getScore() const
-{
-    return this->score_;
 }
 
 std::string SingleGame::getGameInput() const
