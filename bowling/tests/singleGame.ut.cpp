@@ -136,17 +136,16 @@ SCENARIO("SingleGame should count game score")
             std::make_pair("Jan:1/|", 10),
             std::make_pair("Jan:1/|1", 12),
             std::make_pair("Jan:1/|1/", 21),
-            std::make_pair("Jan:1/|1/|1", 23)
-            // std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/||", 181),
-            // std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/", 181)
-            // std::make_pair("Jan:X", 10),
-            // std::make_pair("Jan:X|", 10),
-            // std::make_pair("Jan:X|1", 12),
-            // std::make_pair("Jan:X|11", 14),
-            // std::make_pair("Jan:X|11|", 14),
-            // std::make_pair("Jan:X|X|", 30),
-            // std::make_pair("Jan:X|X|X|", 60)
-        );
+            std::make_pair("Jan:1/|1/|1", 23),
+            std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/", 181),
+            std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/||", 181),
+            std::make_pair("Jan:X", 10),
+            std::make_pair("Jan:X|", 10),
+            std::make_pair("Jan:X|1", 12),
+            std::make_pair("Jan:X|11", 14),
+            std::make_pair("Jan:X|11|", 14),
+            std::make_pair("Jan:X|X|", 30),
+            std::make_pair("Jan:X|X|X|", 60));
 
     GIVEN("Input of the game: " << testGameInput2)
     {

@@ -97,7 +97,7 @@ bool SingleGame::isStrike(size_t firstInFrame)
 
 bool SingleGame::isSpare(size_t firstInFrame)
 {
-    if ((firstInFrame < rolls_.size())) {
+    if (((firstInFrame + 1) < rolls_.size())) {
         return ((rolls_[firstInFrame] + rolls_[firstInFrame + 1]) == 10);
     }
     else {
@@ -114,24 +114,24 @@ void SingleGame::countScore()
     for (size_t i = 0; i < 10 && firstInFrame < numberOfRollsInGame; ++i) {
         if (isStrike(firstInFrame)) {
             score += 10;
-            if (rolls_[firstInFrame + 1] < numberOfRollsInGame) {
+            if ((firstInFrame + 1) < numberOfRollsInGame) {
                 score += rolls_[firstInFrame + 1];
             }
-            if (rolls_[firstInFrame + 2] < numberOfRollsInGame) {
+            if ((firstInFrame + 2) < numberOfRollsInGame) {
                 score += rolls_[firstInFrame + 2];
             }
             firstInFrame++;
         }
         else if (isSpare(firstInFrame)) {
             score += 10;
-            if (rolls_[firstInFrame + 2] < numberOfRollsInGame) {
+            if ((firstInFrame + 2) < numberOfRollsInGame) {
                 score += rolls_[firstInFrame + 2];
             }
             firstInFrame += 2;
         }
         else {
             score += rolls_[firstInFrame];
-            if (rolls_[firstInFrame + 1] < numberOfRollsInGame) {
+            if ((firstInFrame + 1) < numberOfRollsInGame) {
                 score += rolls_[firstInFrame + 1];
             }
             firstInFrame += 2;
