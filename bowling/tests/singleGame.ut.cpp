@@ -159,3 +159,60 @@ SCENARIO("SingleGame should count game score")
         }
     }
 }
+
+SCENARIO("GameInput checker in SingleGame class")
+{
+    GIVEN("Input of the game with spaces")
+    {
+        auto [gameInput, expectedInput] =
+            GENERATE(
+                std::make_pair("", ""),
+                std::make_pair("Ja      n:      ", "Jan:"),
+                std::make_pair("    J  a n :    1   ", "Jan:1"),
+                std::make_pair(" J   a  n:    11", "Jan:11"),
+                std::make_pair("J   a  n:    1- ", "Jan:1-"),
+                std::make_pair("J an: X|7/|9 - |X|-8|   8/|-6  | X|X|X ||   8", "Jan:X|7/|9-|X|-8|8/|-6|X|X|X||8"),
+                std::make_pair("Jan :X| 7/|9  -|X|  -8|8/|-6|  X| X|  X||X", "Jan:X|7/|9-|X|-8|8/|-6|X|X|X||X"),
+                std::make_pair("J a n: X       |X|X|  X|X  |X|X |X     |X|X||XX", "Jan:X|X|X|X|X|X|X|X|X|X||XX"),
+                std::make_pair("  J a n:--   |--|  --|--   |--|--|--     |--|--|  --||", "Jan:--|--|--|--|--|--|--|--|--|--||"));
+
+        WHEN("Constructor called isBowlingGameInput() when game input is: " << gameInput)
+        {
+            SingleGame singleGame(gameInput);
+
+            THEN("All spaces should be erased")
+
+            {
+                REQUIRE(singleGame.getGameInput() == expectedInput);
+            }
+        }
+    }
+
+    GIVEN("Input of the game with fobidden signs after player Name")
+    {
+        auto [gameInput, expectedInput] =
+            GENERATE(
+                std::make_pair("", ""),
+                std::make_pair("Ja      n:   QŹ   ", ""),
+                std::make_pair("    J  a n :  a  1   ", ""),
+                std::make_pair(" J   a  n:    10011", ""),
+                std::make_pair("J   a  n:    []1- ", ""),
+                std::make_pair("J an: X|7/|9 - |X|-8|   8/|-6 cv | X|X|X ||   8", ""),
+                std::make_pair("Jan :X| 7/|9  -|X|  -8|8/|-6|  X| X| =- X||X", ""),
+                std::make_pair("J a n: X       |X|X|  X|X  |X|X |X +++    |X|X||XX", ""),
+                std::make_pair("Jan :X| 7/|9  -|X|  -8|8/|-6|  X| X|  X||X", "Jan:X|7/|9-|X|-8|8/|-6|X|X|X||X"),
+                std::make_pair("  J a n:--   |--|  --|--   |--|--|-- ;'/?    |--|--|  --||", ""),
+                std::make_pair(":", ""));
+
+        WHEN("Constructor called isBowlingGameInput() when game input is: " << gameInput)
+        {
+            SingleGame singleGame(gameInput);
+
+            THEN("If input has forbidden letters shouldn't be initialized")
+
+            {
+                REQUIRE(singleGame.getGameInput() == expectedInput);
+            }
+        }
+    }
+}
