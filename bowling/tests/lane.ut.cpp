@@ -4,10 +4,8 @@
 
 #include <string>
 
-SCENARIO("Lane class constructor takes one string type argument", "[creating lane object]")
-{
-    GIVEN("Argument as a name of file")
-    {
+SCENARIO("Lane class constructor takes one string type argument", "[creating lane object]") {
+    GIVEN("Argument as a name of file") {
         std::string n = "lane";
         std::string n1 = "lane1.txt";
         std::string n2 = "lane2.doc";
@@ -16,8 +14,7 @@ SCENARIO("Lane class constructor takes one string type argument", "[creating lan
         std::string n5 = "";
         std::string n6 = ".txt";
 
-        WHEN("Lane object is creating")
-        {
+        WHEN("Lane object is creating") {
             Lane lane(n);
             Lane lane1(n1);
             Lane lane2(n2);
@@ -26,8 +23,7 @@ SCENARIO("Lane class constructor takes one string type argument", "[creating lan
             Lane lane5(n5);
             Lane lane6(n6);
 
-            THEN("Value laneName_ is equal to filename without extension")
-            {
+            THEN("Value laneName_ is equal to filename without extension") {
                 REQUIRE(lane.getLaneName() == "");
                 REQUIRE(lane1.getLaneName() == "lane1");
                 REQUIRE(lane2.getLaneName() == "lane2");

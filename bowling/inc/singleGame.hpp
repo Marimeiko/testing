@@ -31,6 +31,8 @@ private:
     bool isNotAllowedChar();
     bool isGameFinished();
     bool isGameNotStarted();
+    bool isStrike(size_t firstInFrame);
+    bool isSpare(size_t firstInFrame);
 
 public:
     SingleGame(std::string gameInput);

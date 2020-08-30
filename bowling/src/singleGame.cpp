@@ -2,12 +2,11 @@
 
 #include <algorithm>
 
-SingleGame::SingleGame(std::string gameInput)
-{
+SingleGame::SingleGame(std::string gameInput) {
     setGameInput(gameInput);
     eraseSpaces();
     
-    if(!(this->isBowlingGameInput() || getGameInput().empty())){
+    if(!(this->isBowlingGameInput() || getGameInput().empty())) {
         std::string badInput = "";
         setGameInput(badInput);
     }
@@ -17,15 +16,14 @@ SingleGame::SingleGame(std::string gameInput)
 
 SingleGame::~SingleGame() {}
 
-void SingleGame::parseGameInput()
-{
-    this->readPlayerName();
-    this->putScoresToVector();
-    this->checkGameStatus();
+void SingleGame::parseGameInput() {
+    readPlayerName();
+    putScoresToVector();
+    checkGameStatus();
+    countScore();
 }
 
-bool SingleGame::isBowlingGameInput()
-{
+bool SingleGame::isBowlingGameInput() {
     auto foundIndexAfterName = getGameInput().find(':');
 
     if (foundIndexAfterName != std::string::npos) {
@@ -42,8 +40,7 @@ bool SingleGame::isBowlingGameInput()
     return true;
 }
 
-void SingleGame::eraseSpaces()
-{
+void SingleGame::eraseSpaces() {
     std::string gameInput = getGameInput();
     gameInput.erase(std::remove(gameInput.begin(), gameInput.end(), ' '),
                     gameInput.end());
@@ -88,6 +85,11 @@ void SingleGame::readPlayerName()
 void SingleGame::putScoresToVector()
 {
     makePointsFromSigns();
+    auto foundIndexAfterName = getGameInput().find(":");
+    if (foundIndexAfterName != std::string::npos) {
+        setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
+    }
+    //makePointsFromSigns();
 }
 
 bool SingleGame::isGameFinished()
@@ -138,7 +140,55 @@ void SingleGame::checkGameStatus()
     }
 }
 
-void SingleGame::countScore() {}
+bool SingleGame::isStrike(size_t firstInFrame)
+{
+    return (rolls_[firstInFrame] == 10);
+}
+
+bool SingleGame::isSpare(size_t firstInFrame)
+{
+    if (((firstInFrame + 1) < rolls_.size())) {
+        return ((rolls_[firstInFrame] + rolls_[firstInFrame + 1]) == 10);
+    }
+    else {
+        return false;
+    }
+}
+
+void SingleGame::countScore()
+{
+    size_t score{};
+    size_t firstInFrame{};
+    const auto numberOfRollsInGame = rolls_.size();
+
+    for (size_t i = 0; i < 10 && firstInFrame < numberOfRollsInGame; ++i) {
+        if (isStrike(firstInFrame)) {
+            score += 10;
+            if ((firstInFrame + 1) < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 1];
+            }
+            if ((firstInFrame + 2) < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 2];
+            }
+            firstInFrame++;
+        }
+        else if (isSpare(firstInFrame)) {
+            score += 10;
+            if ((firstInFrame + 2) < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 2];
+            }
+            firstInFrame += 2;
+        }
+        else {
+            score += rolls_[firstInFrame];
+            if ((firstInFrame + 1) < numberOfRollsInGame) {
+                score += rolls_[firstInFrame + 1];
+            }
+            firstInFrame += 2;
+        }
+    }
+    score_ = score;
+}
 
 void SingleGame::setRolls(std::size_t point)
 {

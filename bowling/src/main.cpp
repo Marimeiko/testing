@@ -10,8 +10,7 @@
 
 namespace fs = std::filesystem;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     const fs::path pathToShow{argc >= 2 ? argv[1] : fs::current_path()};
     std::vector<std::string> test{};
 

@@ -1,8 +1,7 @@
 #include "fileHandler.hpp"
 
 FileHandler::FileHandler(std::string fileName, FileHandler::FileAccess fileAccess)
-    : fileName_(fileName), fileAccess_(fileAccess)
-{
+    : fileName_(fileName), fileAccess_(fileAccess) {
     if (fileAccess_ == FileAccess::INPUT) {
         fileStream_.open(fileName_, std::ios::in);
     }
@@ -11,15 +10,13 @@ FileHandler::FileHandler(std::string fileName, FileHandler::FileAccess fileAcces
     }
 }
 
-FileHandler::~FileHandler()
-{
+FileHandler::~FileHandler() {
     if (isFileOpened()) {
         fileStream_.close();
     }
 }
 
-std::string FileHandler::readLine()
-{
+std::string FileHandler::readLine() {
     if (!isFileOpened() || (fileAccess_ != FileAccess::INPUT)) {
         return {};
     }
@@ -34,8 +31,7 @@ std::string FileHandler::readLine()
     return lineReadFromFile;
 }
 
-bool FileHandler::write(std::string dataToWrite)
-{
+bool FileHandler::write(std::string dataToWrite) {
     if (!isFileOpened() || (fileAccess_ != FileAccess::OUTPUT)) {
         return false;
     }
