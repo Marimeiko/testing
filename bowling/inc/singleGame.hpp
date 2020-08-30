@@ -26,8 +26,12 @@ private:
     void putScoresToVector();
     void checkGameStatus();
     void countScore();
+
     bool isGameFinished();
     bool isGameNotStarted();
+
+    bool isStrike(size_t firstInFrame);
+    bool isSpare(size_t firstInFrame);
 
 public:
     SingleGame(std::string gameInput);
@@ -41,7 +45,7 @@ public:
     std::string getPlayerName() const;
     std::string getBowlingSings() const;
     std::vector<std::size_t> getRolls() const;
-    std::size_t getScore() const;
+    std::size_t getScore() const { return score_; };
     std::string getGameInput() const;
     GameStatus getGameStatus() const { return gameStatus_; };
     friend std::ostream& operator<<(std::ostream& os, const SingleGame& singleGame);
