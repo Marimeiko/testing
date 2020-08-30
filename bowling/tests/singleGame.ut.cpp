@@ -107,7 +107,7 @@ SCENARIO("SingleGame should check if game is started, in progress or finished")
     }
 }
 
-SCENARIO("SingleGame should count game score")
+/*SCENARIO("SingleGame should count game score")
 {
     auto [testGameInput2, expectedScore] =
         GENERATE(
@@ -158,7 +158,7 @@ SCENARIO("SingleGame should count game score")
             }
         }
     }
-}
+}*/
 
 SCENARIO("GameInput checker in SingleGame class")
 {
