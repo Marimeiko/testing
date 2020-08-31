@@ -107,6 +107,59 @@ SCENARIO("SingleGame should check if game is started, in progress or finished")
     }
 }
 
+SCENARIO("SingleGame should count game score")
+{
+    auto [testGameInput, expectedScore] =
+        GENERATE(
+            std::make_pair("", 0),
+            std::make_pair("Jan:", 0),
+            std::make_pair("Jan:11|11|11|11|11|11|11|11|11|11||", 20),
+            std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/||9", 190),
+            std::make_pair("Jan:9-|9-|9-|9-|9-|9-|9-|9-|9-|9-||", 90),
+            std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX", 300),
+            std::make_pair("Jan:--|--|--|--|--|--|--|--|--|--||", 0),
+            std::make_pair("Jan:-", 0),
+            std::make_pair("Jan:--", 0),
+            std::make_pair("Jan:--|", 0),
+            std::make_pair("Jan:--|--", 0),
+            std::make_pair("Jan:--|--|--|--|--|--|--|--|--", 0),
+            std::make_pair("Jan:1", 1),
+            std::make_pair("Jan:11", 2),
+            std::make_pair("Jan:11|", 2),
+            std::make_pair("Jan:11|1", 3),
+            std::make_pair("Jan:11|11", 4),
+            std::make_pair("Jan:11|11|", 4),
+            std::make_pair("Jan:11|11|11|11|11|11|11|11|1", 17),
+            std::make_pair("Jan:11|11|11|11|11|11|11|11|11|", 18),
+            std::make_pair("Jan:11|11|11|11|11|11|11|11|11|1", 19),
+            std::make_pair("Jan:1/", 10),
+            std::make_pair("Jan:1/|", 10),
+            std::make_pair("Jan:1/|1", 12),
+            std::make_pair("Jan:1/|1/", 21),
+            std::make_pair("Jan:1/|1/|1", 23),
+            std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/", 181),
+            std::make_pair("Jan:9/|9/|9/|9/|9/|9/|9/|9/|9/|9/||", 181),
+            std::make_pair("Jan:X", 10),
+            std::make_pair("Jan:X|", 10),
+            std::make_pair("Jan:X|1", 12),
+            std::make_pair("Jan:X|11", 14),
+            std::make_pair("Jan:X|11|", 14),
+            std::make_pair("Jan:X|X|", 30),
+            std::make_pair("Jan:X|X|X|", 60));
+
+    GIVEN("Input of the game: " << testGameInput)
+    {
+        WHEN("SingleGame class is created and score is calculated")
+        {
+            SingleGame testSingleGame(testGameInput);
+            THEN("Score = " << expectedScore)
+            {
+                REQUIRE(testSingleGame.getScore() == (size_t)expectedScore);
+            }
+        }
+    }
+}
+
 SCENARIO("GameInput checker in SingleGame class")
 {
     GIVEN("Input of the game with spaces")

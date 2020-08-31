@@ -13,6 +13,7 @@ SingleGame::SingleGame(std::string gameInput)
     }
 
     parseGameInput();
+    countScore();
 }
 
 SingleGame::~SingleGame() {}
@@ -228,7 +229,81 @@ void SingleGame::checkGameStatus()
     }
 }
 
-void SingleGame::countScore() {}
+bool SingleGame::isStrike(size_t firstInFrame)
+{
+    return (rolls_[firstInFrame] == 10);
+}
+
+bool SingleGame::isSpare(size_t firstInFrame)
+{
+    if (((firstInFrame + 1) < rolls_.size())) {
+        return ((rolls_[firstInFrame] + rolls_[firstInFrame + 1]) == 10);
+    }
+
+    return false;
+}
+
+size_t SingleGame::getBonusPointsForStrike(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    if ((firstInFrame + 1) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 1];
+    }
+    if ((firstInFrame + 2) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 2];
+    }
+
+    return bonusPoints;
+}
+
+size_t SingleGame::getBonusPointsForSpare(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    if ((firstInFrame + 2) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 2];
+    }
+    return bonusPoints;
+}
+
+size_t SingleGame::getPointsForRegularGame(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    bonusPoints += rolls_[firstInFrame];
+    if ((firstInFrame + 1) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 1];
+    }
+
+    return bonusPoints;
+}
+
+void SingleGame::countScore()
+{
+    size_t score{};
+    size_t firstInFrame{};
+    const auto numberOfRollsInGame = rolls_.size();
+
+    for (size_t i = 0; i < 10 && firstInFrame < numberOfRollsInGame; ++i) {
+        if (isStrike(firstInFrame)) {
+            score += 10 + getBonusPointsForStrike(firstInFrame);
+            firstInFrame++;
+        }
+        else if (isSpare(firstInFrame)) {
+            score += 10 + getBonusPointsForSpare(firstInFrame);
+            firstInFrame += 2;
+        }
+        else {
+            score += getPointsForRegularGame(firstInFrame);
+            firstInFrame += 2;
+        }
+    }
+    score_ = score;
+}
 
 void SingleGame::setRolls(std::size_t point)
 {
@@ -282,11 +357,6 @@ std::string SingleGame::getBowlingSigns() const
 std::vector<std::size_t> SingleGame::getRolls() const
 {
     return this->rolls_;
-}
-
-std::size_t SingleGame::getScore() const
-{
-    return this->score_;
 }
 
 void SingleGame::setGameInput(std::string gameInput)

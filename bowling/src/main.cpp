@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 
 #include "argumentParser.hpp"
@@ -7,14 +8,40 @@
 #include "lane.hpp"
 #include "singleGame.hpp"
 
+namespace fs = std::filesystem;
+
 int main(int argc, char** argv)
 {
-    std::cout << "Works!\n";
-    std::cout << "Nums of args: " << argc << "\n";
+    const fs::path pathToShow{argc >= 2 ? argv[1] : fs::current_path()};
+    std::vector<std::string> test{};
 
-    if (argv[1]) {
-        std::cout << "First argument: " << argv[0] << "\n";
-        std::cout << "Second argument: " << argv[1] << "\n";
+    for (const auto& entry : fs::directory_iterator(pathToShow)) {
+        const auto filenameStr = entry.path().filename().string();
+        if (entry.is_directory()) {
+            std::cout << "dir:  " << filenameStr << '\n';
+        }
+        else if (entry.is_regular_file()) {
+            std::cout << "file: " << filenameStr << '\n';
+        }
+        else
+            std::cout << "??    " << filenameStr << '\n';
+
+        test.push_back(filenameStr);
+    }
+
+    std::cout << "\n\nMy\n\n";
+    for (auto el : test) {
+        std::cout << el << '\n';
+    }
+
+    std::cout << "\n\nMy end\n\n";
+
+    if (argc >= 2) {
+        DirectoryHandler dh(argv[1]);
+        for (auto el : dh.getFilesInDirectory()) {
+            std::cout << el << '\n';
+        }
+        std::cout << "\n\nMy 2 end\n\n";
     }
 
     return 0;
