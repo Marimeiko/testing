@@ -1,7 +1,11 @@
 #include "bowlingGame.hpp"
 
+#include "directoryHandler.hpp"
+#include "fileHandler.hpp"
+
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 BowlingGame::BowlingGame(int argc, const char** argv)
     : parser_(argc, argv) {}
@@ -28,26 +32,57 @@ std::string& BowlingGame::printHelp() const
 
 void BowlingGame::calculateScores()
 {
+    if (isInputDirectoryGiven()) {
+        DirectoryHandler dirHandler{parser_.getArgument(ArgumentParser::ArgumentNumber::FIRST_ARGUMENT)};
+        for (auto& fileInDirectory : dirHandler.getFilesInDirectory()) {
+            lanes_.emplace_back(fileInDirectory);
+        }
+    }
 }
 
 void BowlingGame::outputScores()
 {
+    if (isInputDirectoryGiven()) {
+        showScores();
+
+        if (isOutputFileGiven()) {
+            saveScores();
+        }
+    }
 }
 
-std::string getOutputFileName()
+std::string BowlingGame::getOutputFileName()
 {
+    if (isOutputFileGiven()) {
+        return parser_.getArgument(ArgumentParser::ArgumentNumber::SECOND_ARGUMENT);
+    }
     return {};
 }
 
-bool isOutputFileGiven()
+bool BowlingGame::isOutputFileGiven()
 {
-    return true;
+    return !isHelpToBePrinted() && parser_.getArgumentsNumber() == 2;
 }
 
-void showScores()
+bool BowlingGame::isInputDirectoryGiven()
 {
+    return !isHelpToBePrinted() &&
+           (parser_.getArgumentsNumber() == 1 || parser_.getArgumentsNumber() == 2);
 }
 
-void saveScores()
+void BowlingGame::showScores()
 {
+    for (auto& lane : lanes_) {
+        std::cout << lane;
+    }
+}
+
+void BowlingGame::saveScores()
+{
+    FileHandler outputFile{getOutputFileName(), FileHandler::FileAccess::OUTPUT};
+    for (auto& lane : lanes_) {
+        std::stringstream ss;
+        ss << lane << '\n';
+        outputFile.write(ss.str());
+    }
 }

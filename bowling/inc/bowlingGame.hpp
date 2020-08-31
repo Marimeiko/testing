@@ -23,6 +23,7 @@ private:
 
     std::string getOutputFileName();
     bool isOutputFileGiven();
+    bool isInputDirectoryGiven();
 
     void showScores();
     void saveScores();
