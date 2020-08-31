@@ -81,13 +81,23 @@ bool SingleGame::isNotBowlingOrder()
     std::string bowlingSigns = getBowlingSigns();
 
     size_t ballThrows = 1;
+    size_t movesAfterTwoPipes = 3;
     bool expectedPipe = false;
     bool expectedSecondPipe = false;
+    bool afterTwoPipes = false;
 
     for (auto sign : bowlingSigns) {
+        if(afterTwoPipes) {
+            movesAfterTwoPipes--;
+            if(!movesAfterTwoPipes) {
+                return true;
+            }
+        }
+
         if (expectedSecondPipe) {
             expectedSecondPipe = false;
             expectedPipe = false;
+            afterTwoPipes = true;
             continue;
         }
 
@@ -154,11 +164,14 @@ bool SingleGame::isNotBowlingSigns()
     auto foundIndexAfterName = getGameInput().find(':');
 
     if (foundIndexAfterName != std::string::npos) {
-        setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
+        if (++foundIndexAfterName) {
+            setBowlingSigns(getGameInput().substr(foundIndexAfterName));
+        }
     }
     else {
         return true;
     }
+
     return false;
 }
 

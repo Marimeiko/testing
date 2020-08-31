@@ -177,6 +177,13 @@ SCENARIO("GameInput checker in SingleGame class")
                 std::make_pair("Jan:X|7/|9-|X|-8|8/|-6|X|X|6-||8", "Jan:X|7/|9-|X|-8|8/|-6|X|X|6-||8"),
                 std::make_pair("Jan:X|7/|9-|X|-8|8/|-6|X|X|-4||X", "Jan:X|7/|9-|X|-8|8/|-6|X|X|-4||X"),
                 std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX", "Jan:X|X|X|X|X|X|X|X|X|X||XX"),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX|", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX3", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX-", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX/", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX||", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX1|", ""),
+                std::make_pair("Jan:X|X|X|X|X|X|X|X|X|X||XX12", ""),
                 std::make_pair("Jan:--|6|--|--|--|--|--|--|--|--||", ""),
                 std::make_pair("Jan:--|--|--||--|--|--|--|--|--|--||", ""));
 
