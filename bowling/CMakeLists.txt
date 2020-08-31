@@ -30,11 +30,12 @@ include_directories(inc)
 add_library(${PROJECT_NAME}-lib STATIC ${SOURCES})
 
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib stdc++fs)
 
 add_executable(${PROJECT_NAME}-ut tests/test_main.cpp ${TESTS})
-target_link_libraries(${PROJECT_NAME}-ut ${PROJECT_NAME}-lib)
-add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}-ut)
+target_link_libraries(${PROJECT_NAME}-ut ${PROJECT_NAME}-lib stdc++fs)
+add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}-ut
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
 target_compile_options(${PROJECT_NAME}-ut PRIVATE ${FLAGS})

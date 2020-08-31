@@ -22,16 +22,23 @@ class BowlingGame{
 +bool isHelpToBePrinted()
 }
 
+enum ArgumentNumber {
+  FIRST_ARGUMENT,
+  SECOND_ARGUMENT
+}
+
 class ArgumentParser{
--std::vector <std::string> parsedArguments_
--size_t argumentsNumber_
++ ArgumentParser(int argc, const char** argv)
++ ArgumentParser() = delete
 
--void parseArguments(int argc, char **argv)
++ std::string getArgument(const ArgumentNumber argumentNumber)
++ size_t getArgumentsNumber()
++ bool checkIfArgumentExists(const std::string& argument)
 
-+ArgumentParser(int argc, char **argv)
-+bool isArgumentExist(const std::string &argument)
-+std::string getArgument(size_t argNumber)
-+size_t getArgumentsNumber_();
+- std::vector<std::string> parsedArguments_{}
+- size_t argumentsNumber_{}
+
+- void parseArguments(const int argc, const char** argv)
 }
 
 class DirectoryHandler{
