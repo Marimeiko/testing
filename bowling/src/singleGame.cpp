@@ -5,39 +5,46 @@
 SingleGame::SingleGame(std::string gameInput) {
     setGameInput(gameInput);
     eraseSpaces();
-    
-    if(!(this->isBowlingGameInput() || getGameInput().empty())) {
+    if (this->isNotBowlingGameInput()) {
         std::string badInput = "";
         setGameInput(badInput);
     }
 
     parseGameInput();
+    countScore();
 }
 
 SingleGame::~SingleGame() {}
 
-void SingleGame::parseGameInput() {
-    readPlayerName();
-    putScoresToVector();
-    checkGameStatus();
-    countScore();
+void SingleGame::parseGameInput()
+{
+    this->putScoresToVector();
+    this->checkGameStatus();
+    this->countScores();
 }
 
-bool SingleGame::isBowlingGameInput() {
-    auto foundIndexAfterName = getGameInput().find(':');
-
-    if (foundIndexAfterName != std::string::npos) {
-        setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
+bool SingleGame::isNotBowlingGameInput()
+{
+    if (getGameInput().empty()) {
+        return true;
     }
-    else {
-        return false;
+
+    if (isNotPlayerName()) {
+        return true;
+    }
+
+    if (isNotBowlingSigns()) {
+        return true;
     }
 
     if (isNotAllowedChar()) {
-        return false;
+        return true;
     }
 
-    return true;
+    if (isNotBowlingOrder()) {
+        return true;
+    }
+    return false;
 }
 
 void SingleGame::eraseSpaces() {
@@ -55,9 +62,9 @@ bool SingleGame::isNotAllowedChar()
 
     auto foundIndexAfterName = gameInput.find(':');
 
-     if (getGameInput() == ":") {
-         return true;
-     }
+    if (getGameInput() == ":") {
+        return true;
+    }
 
     if (foundIndexAfterName != std::string::npos) {
         auto foundNotAllowedCharacter = gameInput.find_first_not_of(ALLOWEDCHARACTERS, ++foundIndexAfterName);
@@ -68,7 +75,62 @@ bool SingleGame::isNotAllowedChar()
     return false;
 }
 
-void SingleGame::readPlayerName()
+bool SingleGame::isNotBowlingOrder()
+{
+    std::string bowlingSigns = getBowlingSigns();
+
+    size_t ballThrows = 1;
+    bool expectedPipe = false;
+    bool expectedSecondPipe = false;
+
+    for (auto sign : bowlingSigns) {
+        if (expectedSecondPipe) {
+            expectedSecondPipe = false;
+            expectedPipe = false;
+            continue;
+        }
+
+        if (expectedPipe && (sign == '|')) {
+            if (ballThrows == 21) {
+                expectedSecondPipe = true;
+                expectedPipe = false;
+                continue;
+            }
+            else {
+                expectedPipe = false;
+                continue;
+            }
+            return true;
+        }
+
+        if (ballThrows % 2) {
+            if ((std::isdigit(sign) || sign == 'X' || sign == '-') && (!expectedPipe)) {
+                if (sign == 'X') {
+                    if (ballThrows != 21) {
+                        expectedPipe = true;
+                    }
+                    ballThrows++;
+                }
+                ballThrows++;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            if ((std::isdigit(sign) || sign == '/' || sign == '-') && (!expectedPipe)) {
+                ballThrows++;
+                expectedPipe = true;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool SingleGame::isNotPlayerName()
 {
     auto foundIndexAfterName = getGameInput().find(':');
     if (foundIndexAfterName != std::string::npos) {
@@ -80,6 +142,23 @@ void SingleGame::readPlayerName()
             setPlayerName(anonymousPlayer);
         }
     }
+    else {
+        return true;
+    }
+    return false;
+}
+
+bool SingleGame::isNotBowlingSigns()
+{
+    auto foundIndexAfterName = getGameInput().find(':');
+
+    if (foundIndexAfterName != std::string::npos) {
+        setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
+    }
+    else {
+        return true;
+    }
+    return false;
 }
 
 void SingleGame::putScoresToVector()
@@ -89,7 +168,6 @@ void SingleGame::putScoresToVector()
     if (foundIndexAfterName != std::string::npos) {
         setBowlingSigns(getGameInput().substr(++foundIndexAfterName));
     }
-    //makePointsFromSigns();
 }
 
 bool SingleGame::isGameFinished()
@@ -150,9 +228,46 @@ bool SingleGame::isSpare(size_t firstInFrame)
     if (((firstInFrame + 1) < rolls_.size())) {
         return ((rolls_[firstInFrame] + rolls_[firstInFrame + 1]) == 10);
     }
-    else {
-        return false;
+    return false;
+}
+
+size_t SingleGame::getBonusPointsForStrike(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    if ((firstInFrame + 1) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 1];
     }
+    if ((firstInFrame + 2) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 2];
+    }
+
+    return bonusPoints;
+}
+
+size_t SingleGame::getBonusPointsForSpare(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    if ((firstInFrame + 2) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 2];
+    }
+    return bonusPoints;
+}
+
+size_t SingleGame::getPointsForRegularGame(size_t firstInFrame)
+{
+    const auto numberOfRollsInGame = rolls_.size();
+    size_t bonusPoints{};
+
+    bonusPoints += rolls_[firstInFrame];
+    if ((firstInFrame + 1) < numberOfRollsInGame) {
+        bonusPoints += rolls_[firstInFrame + 1];
+    }
+
+    return bonusPoints;
 }
 
 void SingleGame::countScore()
@@ -163,27 +278,15 @@ void SingleGame::countScore()
 
     for (size_t i = 0; i < 10 && firstInFrame < numberOfRollsInGame; ++i) {
         if (isStrike(firstInFrame)) {
-            score += 10;
-            if ((firstInFrame + 1) < numberOfRollsInGame) {
-                score += rolls_[firstInFrame + 1];
-            }
-            if ((firstInFrame + 2) < numberOfRollsInGame) {
-                score += rolls_[firstInFrame + 2];
-            }
+            score += 10 + getBonusPointsForStrike(firstInFrame);
             firstInFrame++;
         }
         else if (isSpare(firstInFrame)) {
-            score += 10;
-            if ((firstInFrame + 2) < numberOfRollsInGame) {
-                score += rolls_[firstInFrame + 2];
-            }
+            score += 10 + getBonusPointsForSpare(firstInFrame);
             firstInFrame += 2;
         }
         else {
-            score += rolls_[firstInFrame];
-            if ((firstInFrame + 1) < numberOfRollsInGame) {
-                score += rolls_[firstInFrame + 1];
-            }
+            score += getPointsForRegularGame(firstInFrame);
             firstInFrame += 2;
         }
     }
@@ -244,16 +347,10 @@ std::vector<std::size_t> SingleGame::getRolls() const
     return this->rolls_;
 }
 
-std::size_t SingleGame::getScore() const
-{
-    return this->score_;
-}
-
 void SingleGame::setGameInput(std::string gameInput)
 {
     this->gameInput_ = gameInput;
 }
-
 
 std::string SingleGame::getGameInput() const
 {
